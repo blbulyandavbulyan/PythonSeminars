@@ -9,6 +9,6 @@ for c in list_of_chars:
     if c in letter_to_count:
         letter_to_count[c] = letter_to_count[c] + 1
     else:
-        letter_to_count[c] = 0
-    count_of_repeats = letter_to_count[c]
+        letter_to_count[c] = 1
+    count_of_repeats = letter_to_count[c] - 1
     print(f"{c}_{count_of_repeats}" if count_of_repeats > 0 else c, end=' ')
