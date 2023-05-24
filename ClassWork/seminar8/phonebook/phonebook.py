@@ -1,6 +1,8 @@
 import os.path
 from typing import Callable
 
+from phonebook.contact import Contact
+
 
 # данный файл содержит ядро телефонного справочника, все функции которые находятся здесь не  требуют от пользователя
 # ввода данных с клавиатуры В качестве структуры для хранения справочника используется словарь с ключом по id (целое
@@ -14,40 +16,6 @@ from typing import Callable
 # Все точки запятой содержащиеся в кортеже строк, описывающий контакт при добавлении его в книгу будут проигнорированы,
 # дабы избежать неправильной записи в файл
 
-class InvalidContactIdInFile(RuntimeError):  # исключение, бросаемое в случае если в файле есть контакт с ид -1
-    pass
-
-
-class Contact(object):
-    def __init__(self, fio: str, phone: str, comment: str):
-        self.__fio = fio.replace(";", "")
-        self.__phone = phone.replace(";", "")
-        self.__comment = comment.replace(";", "")
-
-    def __contains__(self, item: str) -> bool:
-        item_cf = item.casefold()
-        return item_cf in self.__fio.casefold() or item_cf in self.__phone or item_cf in self.__comment
-
-    @property
-    def file_data(self) -> str:
-        return f'{self.__fio};{self.__phone};{self.__comment}\n'
-
-    @property
-    def fio(self):
-        return self.__fio
-
-    @property
-    def phone(self):
-        return self.__phone
-
-    @property
-    def comment(self):
-        return self.__comment
-
-
-def get_formatted_contact_str(contact_id: int, contact: Contact) -> str:
-    return f'{contact_id} {contact.fio}\n'
-
 
 class PhoneBook(object):
     __pb: dict[int, Contact] = dict()
@@ -59,31 +27,28 @@ class PhoneBook(object):
             with open(filename, "r") as input_file:
                 for line in input_file:
                     (contact_id, fio, phone, comment) = map(lambda s: s.strip(), line.split(";"))
+                    contact_id = int(contact_id)
                     if contact_id == -1:
-                        raise InvalidContactIdInFile(f"ИД контакта не может быть -1 в файле {filename}")
-                    self.__pb[int(contact_id)] = Contact(fio, phone, comment)
+                        self.__pb[int(contact_id)] = Contact(contact_id, fio, phone, comment)
+
+    def __getitem__(self, item: int) -> Contact:
+        return self.__pb[item]
+
+    def __contains__(self, item: int):
+        return item in self.__pb
 
     def save(self):
         with open(self.__filename, "w") as output_file:
             for contact_id, contact in self.__pb.items():
-                output_file.write(f'{contact};{contact.file_data}')
+                output_file.write(f'{contact.file_data}\n')
 
-    def find_contact(self, find_str: str) -> int:
+    def find(self, find_str: str) -> list[Contact]:
         find_str = find_str.lower()
-        for contact_id, contact in self.__pb.items():
-            if find_str in contact:
-                return contact_id
-        return -1
+        return [contact for contact in self.__pb.values() if find_str in contact]
 
-    #
-    #
-    #
-    # def print_contacts(self) -> None:
-    #     for k, v in self.__pb.items():
-    #         print(get_formatted_contact_str((k, v)))
-    def foreach(self, consumer: Callable[[int, Contact], None]):
-        for contact_id, contact in self.__pb.items():
-            consumer(contact_id, contact)
+    def foreach(self, consumer: Callable[[Contact], None]):
+        for contact in self.__pb.values():
+            consumer(contact)
 
     def add(self, contact: Contact) -> int:
         current_id = max(self.__pb.keys())
