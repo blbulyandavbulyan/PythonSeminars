@@ -8,17 +8,17 @@
 # 8. Выход
 # Поля: ФИО, телефон, комментарий
 from typing import Tuple
-from phonebook import core as pb_core
+from phonebook.phonebook import PhoneBook, Contact
 
-def load_pb_from_typed_filename() -> (str, dict[int, Tuple[str, str, str]]):
+
+def load_pb_from_typed_filename() -> PhoneBook:
     filename = input('Введите имя файла с контактами(оставьте пустым для варианта по умолчанию): ')
     if len(filename) == 0:
         filename = "contacts.txt"
-    return pb_core.load(filename)
-def do_action_if_input_valid_contact_id(pb: dict[int, Tuple[str, str, str]])
-
-def menu() -> None:
-    filename, phonebook = load_pb_from_typed_filename()
+    return PhoneBook(filename)
+def print_contact(contact_id: int, contact: Contact)->None:
+    print(f'Контакт {contact_id}\n\tФИО: {contact.fio},\n\tТелефон: {contact.phone}\n\tКомментарий: {contact.comment}')
+def menu(pb: PhoneBook) -> None:
     print("""
             1. Открывать другой файл
             2. Сохранить файл
@@ -34,10 +34,10 @@ def menu() -> None:
         match input('Введите действие: '):
             case '1':
                 filename, phonebook = load_pb_from_typed_filename()
-            case '2':
-                pb_core.save(phonebook, filename)
-            case '3':
-                pb_core.print_contacts(phonebook)
+            case '2':# Сохранение
+                pb.save()
+            case '3':# распечатка
+                pb.foreach(print_contact)
             case '4':
                 read_contact_and_add(phonebook)
             case '5':
