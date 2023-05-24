@@ -1,7 +1,7 @@
 import os.path
 from typing import Callable
 
-from phonebook.contact import Contact
+from phonebook.contact import Contact, BaseContact
 
 
 # данный файл содержит ядро телефонного справочника, все функции которые находятся здесь не  требуют от пользователя
@@ -15,6 +15,16 @@ from phonebook.contact import Contact
 # comment - Комментарий
 # Все точки запятой содержащиеся в кортеже строк, описывающий контакт при добавлении его в книгу будут проигнорированы,
 # дабы избежать неправильной записи в файл
+class PhoneBookException(RuntimeError):
+    pass
+
+
+class ValueIsNotContact(PhoneBookException):
+    pass
+
+
+class NoContactWithGivenContactId(PhoneBookException):
+    pass
 
 
 class PhoneBook(object):
@@ -33,6 +43,16 @@ class PhoneBook(object):
 
     def __getitem__(self, item: int) -> Contact:
         return self.__pb[item]
+
+    def __setitem__(self, key: int, value: BaseContact) -> None:
+        if key in self.__pb:
+            if isinstance(value, BaseContact):
+                # такая сложная вещь нужна чтобы сохранить старый id
+                self.__pb[key] = Contact(key, value.fio, value.phone, value.comment)
+            else:
+                raise ValueIsNotContact("Вы пытаетесь записать в книгу с контактами не контакт!")
+        else:
+            raise NoContactWithGivenContactId("Нет контакта с переданным id!")
 
     def __contains__(self, item: int):
         return item in self.__pb
