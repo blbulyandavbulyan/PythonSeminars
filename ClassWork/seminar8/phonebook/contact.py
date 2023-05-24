@@ -28,9 +28,18 @@ class BaseContact(object):
     __comment = ""
 
     def __init__(self, fio: str, phone: str, comment: str):
-        self.fio = fio
-        self.phone = phone
-        self.comment = comment
+        if len(new_fio := get_filtered_string(fio)) != 0:
+            self.__fio = new_fio
+        else:
+            raise IllegalFIO("Фамилия пуста!")
+        if len(new_phone := get_filtered_string(phone)) != 0:
+            self.__phone = new_phone
+        else:
+            raise IllegalPhone("Телефон пуст!")
+        if len(new_comment := get_filtered_string(comment)) != 0:
+            self.__comment = new_comment
+        else:
+            raise IllegalComment("Комментарий пуст!")
 
     @property
     def fio(self):
@@ -44,29 +53,9 @@ class BaseContact(object):
     def comment(self):
         return self.__comment
 
-    @fio.setter
-    def fio(self, new_fio: str):
-        if len(new_fio := get_filtered_string(new_fio)) != 0:
-            self.__fio = new_fio
-        else:
-            raise IllegalFIO("Фамилия пуста!")
-
-    @phone.setter
-    def phone(self, new_phone: str):
-        if len(new_phone := get_filtered_string(new_phone)) != 0:
-            self.__phone = new_phone
-        else:
-            raise IllegalPhone("Телефон пуст!")
-
-    @comment.setter
-    def comment(self, new_comment: str):
-        if len(new_comment := get_filtered_string(new_comment)) != 0:
-            self.__comment = new_comment
-        else:
-            raise IllegalComment("Комментарий пуст!")
-
 
 class Contact(BaseContact):
+
     def __init__(self, contact_id: int, fio: str, phone: str, comment: str):
         super().__init__(fio, phone, comment)
         if contact_id == -1:
@@ -75,14 +64,14 @@ class Contact(BaseContact):
 
     def __contains__(self, item: str) -> bool:
         item_cf = item.casefold()
-        return item_cf in self.__fio.casefold() or item_cf in self.__phone or item_cf in self.__comment
+        return item_cf in self.fio.casefold() or item_cf in self.phone or item_cf in self.comment.casefold()
 
     def __str__(self):
-        return f'Контакт {self.contact_id}\n\tФИО: {self.fio},\n\tТелефон: {self.phone}\n\tКомментарий: {self.comment}'
+        return f'Контакт {self.contact_id}\n\tФИО: {self.fio},\n\tТелефон: {self.phone},\n\tКомментарий: {self.comment}'
 
     @property
     def file_data(self) -> str:
-        return f'{self.__contact_id};{self.__fio};{self.__phone};{self.__comment}'
+        return f'{self.contact_id};{self.fio};{self.phone};{self.comment}'
 
     @property
     def contact_id(self):

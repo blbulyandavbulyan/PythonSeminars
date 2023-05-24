@@ -30,6 +30,7 @@ class NoContactWithGivenContactId(PhoneBookException):
 class PhoneBook(object):
     __pb: dict[int, Contact] = dict()
     __filename: str = "contacts.txt"
+    __saved = True
 
     def __init__(self, filename="contacts.txt"):
         self.__filename = filename
@@ -38,8 +39,7 @@ class PhoneBook(object):
                 for line in input_file:
                     (contact_id, fio, phone, comment) = map(lambda s: s.strip(), line.split(";"))
                     contact_id = int(contact_id)
-                    if contact_id == -1:
-                        self.__pb[int(contact_id)] = Contact(contact_id, fio, phone, comment)
+                    self.__pb[int(contact_id)] = Contact(contact_id, fio, phone, comment)
 
     def __getitem__(self, item: int) -> Contact:
         return self.__pb[item]
@@ -49,6 +49,7 @@ class PhoneBook(object):
             if isinstance(value, BaseContact):
                 # такая сложная вещь нужна чтобы сохранить старый id
                 self.__pb[key] = Contact(key, value.fio, value.phone, value.comment)
+                self.__saved = False
             else:
                 raise ValueIsNotContact("Вы пытаетесь записать в книгу с контактами не контакт!")
         else:
@@ -57,10 +58,18 @@ class PhoneBook(object):
     def __contains__(self, item: int):
         return item in self.__pb
 
+    def __len__(self):
+        return len(self.__pb)
+
+    @property
+    def saved(self) -> bool:
+        return self.__saved
+
     def save(self):
         with open(self.__filename, "w") as output_file:
             for contact_id, contact in self.__pb.items():
                 output_file.write(f'{contact.file_data}\n')
+            self.__saved = True
 
     def find(self, find_str: str) -> list[Contact]:
         find_str = find_str.lower()
@@ -70,10 +79,14 @@ class PhoneBook(object):
         for contact in self.__pb.values():
             consumer(contact)
 
-    def add(self, contact: Contact) -> int:
-        current_id = max(self.__pb.keys())
+    def add(self, base_contact: BaseContact) -> Contact:
+        current_id = (max(self.__pb.keys()) if len(self.__pb) != 0 else 0) + 1
+        contact = Contact(current_id, base_contact.fio, base_contact.phone, base_contact.comment)
         self.__pb[current_id + 1] = contact
-        return current_id
+        self.__saved = False
+        return contact
 
     def delete(self, contact_id: int) -> Contact:
-        return self.__pb.pop(contact_id)
+        contact = self.__pb.pop(contact_id)
+        self.__saved = False
+        return contact
