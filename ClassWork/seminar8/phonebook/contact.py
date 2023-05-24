@@ -1,15 +1,23 @@
 class ContactException(RuntimeError):
     pass
 
+
 class InvalidContactId(ContactException):  # исключение, бросаемое в случае если в файле есть контакт с ид -1
     pass
 
+
 class IllegalFIO(ContactException):
     pass
+
+
 class IllegalComment(ContactException):
     pass
+
+
 class IllegalPhone(ContactException):
     pass
+
+
 def get_filtered_string(s: str) -> str:
     return s.replace(";", "").strip()
 
