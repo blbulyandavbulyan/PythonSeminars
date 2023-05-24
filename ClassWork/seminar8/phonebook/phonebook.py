@@ -9,7 +9,7 @@ from phonebook.contact import Contact, BaseContact
 # число) и значением в виде кортежа из: ФИО, номера телефона и комментария
 # В файле справочник сохраняется в следующем формате:
 # Каждый контакт с новой строки и записывается так: id;fio;phone;comment
-# где id - ид контакта, целочисленный(не может быть -1!!!)
+# где id - ид контакта, целочисленный(не может быть меньше чем 1!!!)
 # fio - Фамилия Имя Отчество (записанные через пробел)
 # phone - телефон
 # comment - Комментарий
@@ -28,12 +28,10 @@ class NoContactWithGivenContactId(PhoneBookException):
 
 
 class PhoneBook(object):
-    __pb: dict[int, Contact] = dict()
-    __filename: str = "contacts.txt"
-    __saved = True
-
     def __init__(self, filename="contacts.txt"):
         self.__filename = filename
+        self.__pb = dict()
+        self.__saved = True
         if os.path.exists(filename):
             with open(filename, "r") as input_file:
                 for line in input_file:
@@ -75,14 +73,17 @@ class PhoneBook(object):
         find_str = find_str.lower()
         return [contact for contact in self.__pb.values() if find_str in contact]
 
-    def foreach(self, consumer: Callable[[Contact], None]):
-        for contact in self.__pb.values():
-            consumer(contact)
+    def foreach(self, consumer: Callable[[Contact], None], or_else: Callable[[], None] = None):
+        if len(self) == 0 and or_else is not None:
+            or_else()
+        else:
+            for contact in self.__pb.values():
+                consumer(contact)
 
     def add(self, base_contact: BaseContact) -> Contact:
         current_id = (max(self.__pb.keys()) if len(self.__pb) != 0 else 0) + 1
         contact = Contact(current_id, base_contact.fio, base_contact.phone, base_contact.comment)
-        self.__pb[current_id + 1] = contact
+        self.__pb[current_id] = contact
         self.__saved = False
         return contact
 

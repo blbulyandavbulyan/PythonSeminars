@@ -58,8 +58,8 @@ class Contact(BaseContact):
 
     def __init__(self, contact_id: int, fio: str, phone: str, comment: str):
         super().__init__(fio, phone, comment)
-        if contact_id == -1:
-            raise InvalidContactId(f"ИД контакта не может быть -1")
+        if contact_id < 1:
+            raise InvalidContactId(f"ИД контакта не может быть меньше чем 1")
         self.__contact_id = contact_id
 
     def __contains__(self, item: str) -> bool:
