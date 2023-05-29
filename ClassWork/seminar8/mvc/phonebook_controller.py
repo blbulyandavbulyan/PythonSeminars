@@ -18,10 +18,18 @@ class PhoneBookController:
         self.__model = model
 
     def start(self):
+        model = self.__model
+        view = self.__view
         while True:
-            match self.__view.main_menu(text.main_menu, range(1, 8)):
+            match view.main_menu(text.main_menu, range(1, 8)):
                 case 1:
-                    pass
+                    pb_filename = view.read_pb_file_name(text.enter_contact_filename).strip()
+                    if not pb_filename:
+                        pb_filename = "contacts.txt"
+                    if model.opened() and not model.saved():#проверяем на то, был ли открыт справочник и не был ли он сохранён
+                        if view.ask_yes_no_question_from_user(text.need_to_save_pb_file):#сохраняем, если пользователь ответил да
+                            model.save()
+                    model.open(pb_filename)
                 case 2:
                     pass
                 case 3:

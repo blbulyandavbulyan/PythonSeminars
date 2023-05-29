@@ -6,8 +6,9 @@ from phonebook.contact import Contact, BaseContact
 
 class PhoneBookView:
     __metaclass__ = ABCMeta
+
     @abstractmethod
-    def read_file_name(self, msg: str): raise NotImplementedError()
+    def read_pb_file_name(self, msg: str) -> str: raise NotImplementedError()
 
     @abstractmethod
     def main_menu(self, main_menu_str: str, valid_choices: range): raise NotImplementedError()
@@ -25,4 +26,4 @@ class PhoneBookView:
     def read_modified_contact(self, contact: BaseContact) -> BaseContact: raise NotImplementedError()
 
     @abstractmethod
-    def ask_question_from_user(self, question_msg: str) -> bool: raise NotImplementedError()
+    def ask_yes_no_question_from_user(self, question_msg: str) -> bool: raise NotImplementedError()
