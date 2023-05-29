@@ -23,10 +23,6 @@ def get_filtered_string(s: str) -> str:
 
 
 class BaseContact(object):
-    __fio = ""
-    __phone = ""
-    __comment = ""
-
     def __init__(self, fio: str, phone: str, comment: str):
         if len(new_fio := get_filtered_string(fio)) != 0:
             self.__fio = new_fio
