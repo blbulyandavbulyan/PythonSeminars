@@ -22,13 +22,16 @@ class PhoneBookConsoleView(PhoneBookView):
     def main_menu(self, main_menu_str: str, valid_choices: range):
         print(main_menu_str)
         while True:
-            your_choice = input(text.enter_your_choice)
-            if your_choice in valid_choices:
-                return your_choice
+            try:
+                your_choice = int(input(text.enter_your_choice))
+                if your_choice in valid_choices:
+                    return your_choice
+            except ValueError:
+                self.print_error(text.you_enter_not_a_integer_number)
 
     def print_contacts(self, contacts: Iterable[Contact], message_if_empty: str):
         for contact in contacts:
-            print(f'* {contact.contact_id:>3} | {contact.fio:>30} | {contact.comment} *')
+            print(f'* {contact.contact_id:>3} | {contact.fio:^30} | {contact.phone:>30} | {contact.comment:>15} *')
 
     def print_message(self, message: str):
         print('\n' + '=' * (len(message) + 2))
@@ -59,7 +62,7 @@ class PhoneBookConsoleView(PhoneBookView):
             phone = contact.phone
         comment = input(input_contact_parts_messages['comment']).strip()
         if not comment:
-            comment = contact.phone
+            comment = contact.comment
         return BaseContact(fio, phone, comment)
 
     def ask_yes_no_question_from_user(self, question_msg: str) -> bool:
@@ -80,4 +83,3 @@ class PhoneBookConsoleView(PhoneBookView):
             except ValueError:
                 self.print_error(text.you_enter_not_a_integer_number)
                 continue
-

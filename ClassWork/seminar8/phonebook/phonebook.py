@@ -97,12 +97,15 @@ class PhoneBook(PhoneBookModel):
         self[contact_id] = base_contact
 
     def open(self, pb_filename: str):
-        if os.path.exists(self.__filename):
-            with open(self.__filename, "r") as input_file:
+        pb = dict()
+        if os.path.exists(pb_filename):
+            with open(pb_filename, "r") as input_file:
                 for line in input_file:
                     (contact_id, fio, phone, comment) = map(lambda s: s.strip(), line.split(";"))
                     contact_id = int(contact_id)
-                    self.__pb[int(contact_id)] = Contact(contact_id, fio, phone, comment)
+                    pb[int(contact_id)] = Contact(contact_id, fio, phone, comment)
+        self.__pb = pb
+        self.__filename = pb_filename
         self.__opened = True
         pass
 
@@ -114,3 +117,6 @@ class PhoneBook(PhoneBookModel):
 
     def contains_id(self, contact_id: int) -> bool:
         return contact_id in self
+
+    def is_pb_saved(self) -> bool:
+        return self.saved

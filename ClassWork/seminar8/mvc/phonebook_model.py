@@ -25,7 +25,7 @@ class PhoneBookModel:
     def save(self): raise NotImplementedError()
 
     @abstractmethod
-    def saved(self) -> bool: raise NotImplementedError()
+    def is_pb_saved(self) -> bool: raise NotImplementedError()
 
     @abstractmethod
     def open(self, pb_filename: str): raise NotImplementedError()

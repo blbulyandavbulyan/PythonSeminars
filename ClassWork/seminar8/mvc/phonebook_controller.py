@@ -22,6 +22,10 @@ class PhoneBookController:
         if not pb_filename:
             pb_filename = "contacts.txt"
         self.__model.open(pb_filename)
+    def __save_if_yes(self):
+        if self.__view.ask_yes_no_question_from_user(
+                text.need_to_save_pb_file):  # сохраняем, если пользователь ответил да
+            self.__model.save()
 
     def start(self):
         model = self.__model
@@ -29,12 +33,10 @@ class PhoneBookController:
         if not model.opened():
             self.__open_pb()
         while True:
-            match view.main_menu(text.main_menu, range(1, 8)):
+            match view.main_menu(text.main_menu, range(1, 9)):
                 case 1:
-                    if model.opened() and not model.saved():  # проверяем на то, был ли открыт справочник и не был ли он сохранён
-                        if view.ask_yes_no_question_from_user(
-                                text.need_to_save_pb_file):  # сохраняем, если пользователь ответил да
-                            model.save()
+                    if model.opened() and not model.is_pb_saved():  # проверяем на то, был ли открыт справочник и не был ли он сохранён
+                        self.__save_if_yes()
                     self.__open_pb()
                 case 2:
                     model.save()
@@ -68,4 +70,6 @@ class PhoneBookController:
                             break
                     pass
                 case 8:
+                    if not model.is_pb_saved():
+                        self.__save_if_yes()
                     break
