@@ -4,3 +4,7 @@ main_menu = ""
 enter_contact_filename = 'Введите имя файла с контактами(оставьте пустым для варианта по умолчанию): '
 choose_what_you_want_to_change = 'Выберите что вы хотите изменить?\n\t1)ФИО\n\t2)Телефон\n\t3)Комментарий'
 need_to_save_pb_file = 'Вы не сохранили уже открытый справочник хотите сохранить ?(y/n): '
+phonebook_is_empty = 'Список контактов пуст!'
+new_contact_messages = {"fio": "Введите ФИО: ", "phone": "Введите телефон: ", "comment: ": "Введите комментарий: "}
+enter_string_to_search = "Введите строку для поиска: "
+contact_not_found_by_your_query = 'По вашему запросу контакты не найдены'

@@ -20,8 +20,13 @@ class PhoneBookView:
     def print_message(self, message: str): raise NotImplementedError()
 
     @abstractmethod
+    def print_error(self, error: str): raise NotImplementedError()
+
+    @abstractmethod
     def read_new_contact(self, input_contact_parts_messages: dict[str, str]) -> Contact: raise NotImplementedError()
 
+    @abstractmethod
+    def read_search_line(self, msg: str) -> str: raise NotImplementedError()
     @abstractmethod
     def read_modified_contact(self, contact: BaseContact) -> BaseContact: raise NotImplementedError()
 
