@@ -41,14 +41,31 @@ class PhoneBookController:
                 case 3:
                     view.print_contacts(model.get_contacts(), text.phonebook_is_empty)
                 case 4:
-                    new_contact = view.read_new_contact(text.new_contact_messages)
+                    new_contact = view.read_new_contact(text.messages_for_parts_of_contact)
                     model.add(new_contact)
                 case 5:
                     found_contacts = model.find(view.read_search_line(text.enter_string_to_search))
                     view.print_contacts(found_contacts, text.contact_not_found_by_your_query)
                 case 6:
-                    pass
+                    while True:
+                        contact_id_to_modify = view.read_contact_id(text.enter_contact_id_to_modify, model.contains_id)
+                        if contact_id_to_modify == -1:
+                            break
+                        elif model.contains_id(contact_id_to_modify):
+                            model.modify(contact_id_to_modify,
+                                         view.read_modified_contact(
+                                             model.get(contact_id_to_modify), text.messages_for_parts_of_contact
+                                         )
+                                         )
+                            break
                 case 7:
+                    while True:
+                        contact_id_to_delete = view.read_contact_id(text.enter_contact_id_to_delete, model.contains_id)
+                        if contact_id_to_delete == -1:
+                            break
+                        elif model.contains_id(contact_id_to_delete):
+                            model.delete(contact_id_to_delete)
+                            break
                     pass
                 case 8:
                     break

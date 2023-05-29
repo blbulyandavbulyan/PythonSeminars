@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Iterable
+from typing import Iterable, Callable
 
 from phonebook.contact import Contact, BaseContact
 
@@ -27,8 +27,12 @@ class PhoneBookView:
 
     @abstractmethod
     def read_search_line(self, msg: str) -> str: raise NotImplementedError()
+
     @abstractmethod
-    def read_modified_contact(self, contact: BaseContact) -> BaseContact: raise NotImplementedError()
+    def read_modified_contact(self, contact: BaseContact, input_contact_parts_messages: str) -> BaseContact: raise NotImplementedError()
 
     @abstractmethod
     def ask_yes_no_question_from_user(self, question_msg: str) -> bool: raise NotImplementedError()
+
+    @abstractmethod
+    def read_contact_id(self, message: str, is_contact_id_valid: Callable[[int], bool]) -> int: raise NotImplementedError()

@@ -9,6 +9,8 @@ class PhoneBookModel:
 
     @abstractmethod
     def add(self, bc: BaseContact) -> Contact: raise NotImplementedError()
+    @abstractmethod
+    def get(self, contact_id: int) -> Contact: raise NotImplementedError()
 
     @abstractmethod
     def modify(self, contact_id: int, base_contact: BaseContact): raise NotImplementedError()
