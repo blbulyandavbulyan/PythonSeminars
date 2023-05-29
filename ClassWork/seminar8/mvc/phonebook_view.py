@@ -23,13 +23,13 @@ class PhoneBookView:
     def print_error(self, error: str): raise NotImplementedError()
 
     @abstractmethod
-    def read_new_contact(self, input_contact_parts_messages: dict[str, str]) -> Contact: raise NotImplementedError()
+    def read_new_contact(self, input_contact_parts_messages: dict[str, str]) -> BaseContact: raise NotImplementedError()
 
     @abstractmethod
     def read_search_line(self, msg: str) -> str: raise NotImplementedError()
 
     @abstractmethod
-    def read_modified_contact(self, contact: BaseContact, input_contact_parts_messages: str) -> BaseContact: raise NotImplementedError()
+    def read_modified_contact(self, contact: BaseContact, input_contact_parts_messages: dict[str, str]) -> BaseContact: raise NotImplementedError()
 
     @abstractmethod
     def ask_yes_no_question_from_user(self, question_msg: str) -> bool: raise NotImplementedError()

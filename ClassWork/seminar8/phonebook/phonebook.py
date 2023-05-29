@@ -1,6 +1,8 @@
 import os.path
-from typing import Callable
+from abc import ABC
+from typing import Callable, Iterable
 
+from mvc.phonebook_model import PhoneBookModel
 from phonebook.contact import Contact, BaseContact
 
 
@@ -27,17 +29,13 @@ class NoContactWithGivenContactId(PhoneBookException):
     pass
 
 
-class PhoneBook(object):
-    def __init__(self, filename="contacts.txt"):
-        self.__filename = filename
+class PhoneBook(PhoneBookModel):
+
+    def __init__(self):
+        self.__filename = "contacts.txt"
         self.__pb = dict()
         self.__saved = True
-        if os.path.exists(filename):
-            with open(filename, "r") as input_file:
-                for line in input_file:
-                    (contact_id, fio, phone, comment) = map(lambda s: s.strip(), line.split(";"))
-                    contact_id = int(contact_id)
-                    self.__pb[int(contact_id)] = Contact(contact_id, fio, phone, comment)
+        self.__opened = False
 
     def __getitem__(self, item: int) -> Contact:
         return self.__pb[item]
@@ -91,3 +89,28 @@ class PhoneBook(object):
         contact = self.__pb.pop(contact_id)
         self.__saved = False
         return contact
+
+    def get(self, contact_id: int) -> Contact:
+        return self[contact_id]
+
+    def modify(self, contact_id: int, base_contact: BaseContact):
+        self[contact_id] = base_contact
+
+    def open(self, pb_filename: str):
+        if os.path.exists(self.__filename):
+            with open(self.__filename, "r") as input_file:
+                for line in input_file:
+                    (contact_id, fio, phone, comment) = map(lambda s: s.strip(), line.split(";"))
+                    contact_id = int(contact_id)
+                    self.__pb[int(contact_id)] = Contact(contact_id, fio, phone, comment)
+        self.__opened = True
+        pass
+
+    def opened(self) -> bool:
+        return self.__opened
+
+    def get_contacts(self) -> Iterable[Contact]:
+        return self.__pb.values()
+
+    def contains_id(self, contact_id: int) -> bool:
+        return contact_id in self

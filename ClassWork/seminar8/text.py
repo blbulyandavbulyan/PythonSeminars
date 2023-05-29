@@ -11,3 +11,7 @@ contact_not_found_by_your_query = 'По вашему запросу контак
 enter_contact_id_for = "Введите ИД контакта для "
 enter_contact_id_to_modify = f"{enter_contact_id_for} изменения: "
 enter_contact_id_to_delete = f"{enter_contact_id_for} удаления: "
+enter_your_choice = "Введите вариант: "
+leave_blank_to_not_change = "Оставьте пустыми те данные, которые не хотите менять"
+you_enter_not_a_integer_number = "Вы ввели не целое число!"
+phonebook_does_not_contain_given_contact_id = "Справочник не содержит введённого ИД контакта!"
