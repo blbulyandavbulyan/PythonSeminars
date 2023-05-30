@@ -32,16 +32,18 @@ class PhoneBookConsoleView(PhoneBookView):
     def print_contacts(self, contacts: Iterable[Contact], message_if_empty: str):
         for contact in contacts:
             print(f'* {contact.contact_id:>3} | {contact.fio:^30} | {contact.phone:>30} | {contact.comment:>15} *')
+        if not contacts:
+            self.print_message(message_if_empty)
 
     def print_message(self, message: str):
         print('\n' + '=' * (len(message) + 2))
         print('*' + message + '*')
-        print('\n' + '=' * (len(message) + 2))
+        print('=' * (len(message) + 2))
 
     def print_error(self, error: str):
-        print('\n' + '=' * (len(error) + 2))
+        print('\n' + '*' * (len(error) + 2))
         print('*' + error + '*')
-        print('=' * (len(error) + 2))
+        print('*' * (len(error) + 2))
 
     def read_new_contact(self, input_contact_parts_messages: dict[str, str]) -> BaseContact:
         fio = read_not_empty_str(input_contact_parts_messages['fio'])
